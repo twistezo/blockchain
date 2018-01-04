@@ -15,4 +15,3 @@ mvn clean compile assembly:single exec:java
 ```
 
 ### Screenshots
-<img src="http://i.imgur.com/w92SpW5.png">
