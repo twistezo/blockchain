@@ -52,5 +52,6 @@ buildNumber.properties
 bin/
 .classpath
 .project
+.vscode/
 
 # End of https://www.gitignore.io/api/java,maven,visualstudiocode
