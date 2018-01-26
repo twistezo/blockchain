@@ -1,55 +1,91 @@
 package com.blockchain;
 
+import java.security.Security;
 import java.util.ArrayList;
-import com.google.gson.GsonBuilder;
+import java.util.HashMap;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-class Blockchain {
+/** 
+ * What is UTX in blockchain?
+ * 
+ * A UTXO is an unspent transaction output. In an accepted transaction in a valid blockchain 
+ * payment system (such as Bitcoin), only unspent outputs can be used as inputs to a transaction. 
+ * When a transaction takes place, inputs are deleted and outputs are created as new UTXOs 
+ * that may then be consumed in future transactions.
+ */
 
-	public static ArrayList<Block> blockChain = new ArrayList<Block>();
-	public static int difficulty = 5; // for now Litecoin's difficulty is around 440
+public class Blockchain {
+	static HashMap<String, TransactionOutput> UTXOs = new HashMap<String, TransactionOutput>();
+	private ArrayList<Block> blockchain = new ArrayList<Block>();
+	private int difficulty = 3;
+	private Transaction genesisTransaction;
 
 	public static void main(String[] args) {
-		System.out.println("*** My Blockchain ***");
-
-		blockChain.add(new Block("I am first block", "0"));
-		System.out.println("\nTrying to mine block 1...");
-		blockChain.get(0).mineBlock(difficulty);
-
-		blockChain.add(new Block("I am second block", blockChain.get(blockChain.size() - 1).hash));
-		System.out.println("\nTrying to mine block 2...");
-		blockChain.get(1).mineBlock(difficulty);
-
-		blockChain.add(new Block("I am third block", blockChain.get(blockChain.size() - 1).hash));
-		System.out.println("\nTrying to mine block 3...");
-		blockChain.get(2).mineBlock(difficulty);
-
-		System.out.println("\nBlockchain is valid: " + isChainValid());
-
-		String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(blockChain);
-		System.out.println("\nBlockchain: ");
-		System.out.println(blockchainJson);
+		Blockchain blockchainRunner = new Blockchain();
+		blockchainRunner.run();
 	}
 
-	public static Boolean isChainValid() {
-		Block currentBlock;
-		Block previousBlock;
-		String hashTarget = new String(new char[difficulty]).replace('\0', '0');
+	void run() {
+		Security.addProvider(new BouncyCastleProvider());
+		Wallet walletA = new Wallet();
+		Wallet walletB = new Wallet();
 
-		for (int i = 1; i < blockChain.size(); i++) {
-			currentBlock = blockChain.get(i);
-			previousBlock = blockChain.get(i - 1);
-			if (!currentBlock.hash.equals(currentBlock.calculateHash())) {
-				System.out.println("Warning: Current block hash and calculated hash for this block are not equal.");
-				return false;
-			}
-			if (!previousBlock.hash.equals(currentBlock.previousHash)) {
-				System.out.println("Warning: Current block previous hash and previous block hash are not equal.");
-				return false;
-			}
-			if (!currentBlock.hash.substring(0, difficulty).equals(hashTarget)) {
-				System.out.println("Warning: This block has not been mined.");
-			}
-		}
-		return true;
+		// hardcoded first wallet and transaction
+		System.out.println("Creating genesis wallet and first transaction...");
+		Wallet genesisWallet = new Wallet();
+		genesisTransaction = new Transaction(genesisWallet.publicKey, walletA.publicKey, 100f, null);
+		genesisTransaction.generateSignature(genesisWallet.privateKey);
+		genesisTransaction.transactionId = "0";
+		genesisTransaction.outputs.add(new TransactionOutput(genesisTransaction.recipient, genesisTransaction.value,
+				genesisTransaction.transactionId));
+		UTXOs.put(genesisTransaction.outputs.get(0).id, genesisTransaction.outputs.get(0));
+		System.out.println("Creating genesis wallet and first transaction... DONE");
+
+		System.out.println("\nCreating and Mining Genesis block...");
+		Block genesis = new Block("0");
+		genesis.addTransaction(genesisTransaction);
+		addBlock(genesis);
+		System.out.println("Creating and Mining Genesis block... DONE");
+
+		System.out.println("\nTest #1...");
+		Block block1 = new Block(genesis.hash);
+		printBalance(walletA, "A");
+		printBalance(walletB, "B");
+		System.out.println("Sending '40' from WalletA to WalletB");
+		block1.addTransaction(walletA.sendFunds(walletB.publicKey, 40f));
+		addBlock(block1);
+		printBalance(walletA, "A");
+		printBalance(walletB, "B");
+
+		System.out.println("\nTest #2...");
+		Block block2 = new Block(block1.hash);
+		printBalance(walletA, "A");
+		printBalance(walletB, "B");
+		System.out.println("Sending '1000' from WalletA to WalletB");
+		block2.addTransaction(walletA.sendFunds(walletB.publicKey, 1000f));
+		addBlock(block2);
+		printBalance(walletA, "A");
+		printBalance(walletB, "B");
+
+		System.out.println("\nTest #3...");
+		Block block3 = new Block(block2.hash);
+		printBalance(walletA, "A");
+		printBalance(walletB, "B");
+		System.out.println("Sending '20' from WalletB to WalletA");
+		block3.addTransaction(walletB.sendFunds(walletA.publicKey, 20));
+		addBlock(block3);
+		printBalance(walletA, "A");
+		printBalance(walletB, "B");
+
+		ChainValidator.check(blockchain, genesisTransaction, difficulty);
+	}
+
+	private void addBlock(Block newBlock) {
+		newBlock.mineBlock(difficulty);
+		blockchain.add(newBlock);
+	}
+
+	private void printBalance(Wallet wallet, String wallet_name) {
+		System.out.println("Wallet " + wallet_name + " balance is: " + wallet.getBalance());
 	}
 }

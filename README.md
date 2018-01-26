@@ -22,42 +22,55 @@ mvn clean compile assembly:single exec:java
 ### Actual version
 ```
 *** My Blockchain ***
+Creating genesis wallet and first transaction...
+Creating genesis wallet and first transaction... DONE
 
-Trying to mine block 1...
-Block mined: 0000006956846d9d049cae8a382dc3e4faa8d41de6809580ac1c95ebefede6eb
+Creating and Mining Genesis block...
+ Adding transaction to block...
+ Adding transaction to block... DONE
+ Mining block: aac9277705d37faf43e35d8dec7ff7aba6756e988ec4eb8fed9739fc5a84ad4d
+ Mining block... DONE
+Creating and Mining Genesis block... DONE
 
-Trying to mine block 2...
-Block mined: 000005ecd3a8ba70e63ab0a8975c8ccc2562eb918d0dc451f64d6244bcc0aba9
+Test #1...
+Wallet A balance is: 100.0
+Wallet B balance is: 0.0
+Sending '40' from WalletA to WalletB
+ Adding transaction to block...
+ Processing transaction...
+ Processing transaction... DONE
+ Adding transaction to block... DONE
+ Mining block: ea230fae881499318071c232818b5908725cfbbcfc9c29a6a377ac670ecfea07
+ Mining block... DONE
+Wallet A balance is: 60.0
+Wallet B balance is: 40.0
 
-Trying to mine block 3...
-Block mined: 00000a95292012a982e082d08cc3c8d8d70aa30046a7898cde04c4c73393b801
+Test #2...
+Wallet A balance is: 60.0
+Wallet B balance is: 40.0
+Sending '1000' from WalletA to WalletB
+ Error: Not enough funds
+ Adding transaction to block...
+ Mining block: ba33660efde135f1e2544c8ec86882674ded718abb58a8f81d9d23c2a3b8c712
+ Mining block... DONE
+Wallet A balance is: 60.0
+Wallet B balance is: 40.0
 
-Blockchain is valid: true
+Test #3...
+Wallet A balance is: 60.0
+Wallet B balance is: 40.0
+Sending '20' from WalletB to WalletA
+ Adding transaction to block...
+ Processing transaction...
+ Processing transaction... DONE
+ Adding transaction to block... DONE
+ Mining block: 95978333a7b46a9b5e3509de09108a1f8fd74645b60b3864e4f3706334ad1787
+ Mining block... DONE
+Wallet A balance is: 80.0
+Wallet B balance is: 20.0
 
-Blockchain:
-[
-  {
-    "hash": "0000006956846d9d049cae8a382dc3e4faa8d41de6809580ac1c95ebefede6eb",
-    "previousHash": "0",
-    "data": "I am first block",
-    "timeStamp": 1515154151390,
-    "nonce": 4462828
-  },
-  {
-    "hash": "000005ecd3a8ba70e63ab0a8975c8ccc2562eb918d0dc451f64d6244bcc0aba9",
-    "previousHash": "0000006956846d9d049cae8a382dc3e4faa8d41de6809580ac1c95ebefede6eb",
-    "data": "I am second block",
-    "timeStamp": 1515154156319,
-    "nonce": 1200888
-  },
-  {
-    "hash": "00000a95292012a982e082d08cc3c8d8d70aa30046a7898cde04c4c73393b801",
-    "previousHash": "000005ecd3a8ba70e63ab0a8975c8ccc2562eb918d0dc451f64d6244bcc0aba9",
-    "data": "I am third block",
-    "timeStamp": 1515154157774,
-    "nonce": 675895
-  }
-]
+Validate blockchain...
+Validate blockchain... DONE
 ```
 
 
