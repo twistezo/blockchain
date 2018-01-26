@@ -10,9 +10,11 @@ Java
 maven
 
 ### Features
-* SHA256 algorithm for hash
-* requires proof of work mining to validate new blocks
-* methods for checking if data in it is valid and unchanged
+* blocks
+* wallets
+* transactions
+* mining system
+* digital signatures
 
 ### Build/Run
 ```
