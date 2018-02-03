@@ -18,7 +18,7 @@ public class Blockchain {
 	/**
 	 * Hardcode first wallet, first transaction and first block
 	 */
-	void prepareGenesisTransaction(Wallet secondWallet) {
+	void prepareGenesisTransaction(Wallet secondWallet, Blockchain blockchain) {
 		Wallet genesisWallet = new Wallet();
 		genesisTransaction = new Transaction(genesisWallet.publicKey, secondWallet.publicKey, 100f, null);
 		genesisTransaction.generateSignature(genesisWallet.privateKey);
@@ -30,6 +30,7 @@ public class Blockchain {
 		genesisBlock.addTransaction(genesisTransaction);
 		genesisBlock.mineBlock(difficulty);
 		blocks.add(genesisBlock);
+		validateBlockchain(blockchain);
 	}
 
 	void makeTransfer(Wallet sender, Wallet recipient, float value, Blockchain blockchain) {
@@ -41,9 +42,14 @@ public class Blockchain {
 		blocks.add(block);
 		printBalance(sender, "Sender");
 		printBalance(recipient, "Recipient");
+		validateBlockchain(blockchain);
+	}
 
-		Utils.log("\nValidating blockchain..");
-		ChainValidator.check(blockchain.blocks, genesisTransaction, difficulty);
+	private void validateBlockchain(Blockchain blockchain) {
+		System.out.print("\nValidating blockchain..");
+		if (ChainValidator.check(blockchain.blocks, genesisTransaction, difficulty)) {
+			System.out.print(" OK\n");
+		}
 	}
 
 	Wallet createWallet() {
@@ -52,6 +58,10 @@ public class Blockchain {
 
 	void setMiningDifficulty(int value) {
 		this.difficulty = value;
+	}
+
+	ArrayList<Block> getBlocks() {
+		return blocks;
 	}
 
 	private void printBalance(Wallet wallet, String wallet_name) {

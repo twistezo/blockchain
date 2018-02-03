@@ -39,6 +39,10 @@ class Block {
         return true;
     }
 
+    /**
+     * Mining block means that we have to find a SHA-256 variation of block hash 
+     * value beginning with '000` where numbers of leading zeros depends of mining difficulty
+     */
     void mineBlock(int difficulty) {
         Utils.log("Mining block: " + hash);
         merkleRoot = CryptoUtils.getMerkleRoot(transactions);

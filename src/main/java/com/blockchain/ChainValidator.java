@@ -16,7 +16,7 @@ class ChainValidator {
             currentBlock = blockchain.get(i);
 
             if (!currentBlock.hash.equals(currentBlock.calculateHash())) {
-                Utils.log("Error: Hash of block is damaged");
+                Utils.log("Error: Block hash is damaged");
                 return false;
             }
             if (!previousBlock.hash.equals(currentBlock.previousHash)) {

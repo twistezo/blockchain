@@ -46,51 +46,53 @@ mvn clean compile assembly:single exec:java
 ### Actual version
 ```
 Creating genesis wallet and first transaction..
-Mining block: 9343a963b3a65e687153396b1939d81774acc1523e0799afa54a06c990cc30f5
+Mining block: 09d946dfa8d9ccafc23d362e09ec036bfbdf49aed67e9cde8649e4b73f62abaa
+
+Validating blockchain.. OK
 
 Test #1 Sending '40' from Wallet A to Wallet B
 -----------------------------------------------
 Sender wallet balance = 100.0
 Recipient wallet balance = 0.0
 Processing transaction..
-Mining block: 531295eba463504fccf829f7347f3306a594644b04919bc4547efc7d83f392a9
+Mining block: f9b35a09fe2e6ab3b4510dcf88e23bd33816eaa9018ee8721c1a0c1e0245f138
 Sender wallet balance = 60.0
 Recipient wallet balance = 40.0
 
-Validating blockchain..
+Validating blockchain.. OK
 
 Test #2 Sending '1000' from Wallet A to Wallet B
 -----------------------------------------------
 Sender wallet balance = 60.0
 Recipient wallet balance = 40.0
 Error: Not enough funds
-Mining block: f867b858da73c160c039f5a31d0aaeda4da14c911848475b60c12c9bbee681dc
+Mining block: 6fc0b114c5c9cbb56beab0d4150a08367914d7e3c8636da6b79ae406dafa4dc4
 Sender wallet balance = 60.0
 Recipient wallet balance = 40.0
 
-Validating blockchain..
+Validating blockchain.. OK
 
 Test #3 Sending '20' from Wallet B to Wallet A
 -----------------------------------------------
 Sender wallet balance = 40.0
 Recipient wallet balance = 60.0
 Processing transaction..
-Mining block: adcefad56af0ed6a810fde329c5be54b4b766b86e4813e57bd6eedfe1c641208
+Mining block: 3215f84bb27e5f1e2a31ae791f9ae3a0033217c117969e5baa18e27108d36da1
 Sender wallet balance = 20.0
 Recipient wallet balance = 80.0
 
-Validating blockchain..
+Validating blockchain.. OK
 
 Test #4 Sending '30' from Wallet A to Wallet C
 -----------------------------------------------
 Sender wallet balance = 80.0
 Recipient wallet balance = 0.0
 Processing transaction..
-Mining block: a9ae88c08579408bb1ec09bfd4a0fb5a7f938c9f524e1d0a9d7af9e581055682
+Mining block: 858846fe5aad2a75be98a98b6e1a91ce27eb855509bbcbd38b283a59b2230fb3
 Sender wallet balance = 50.0
 Recipient wallet balance = 30.0
 
-Validating blockchain..
+Validating blockchain.. OK
 ```
 
 

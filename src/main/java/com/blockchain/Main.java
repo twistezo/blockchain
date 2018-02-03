@@ -9,7 +9,7 @@ public class Main {
         Wallet walletC = blockchain.createWallet();
 
         Utils.log("\nCreating genesis wallet and first transaction..");
-        blockchain.prepareGenesisTransaction(walletA);
+        blockchain.prepareGenesisTransaction(walletA, blockchain);
         blockchain.setMiningDifficulty(4);
 
         Utils.log("\nTest #1 Sending '40' from Wallet A to Wallet B");
