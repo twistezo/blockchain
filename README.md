@@ -17,7 +17,7 @@ Current transaction data counter: `T: inputs = 1, outputs = 2`<br/>
 Add these two outputs to UTXOs -> `UTXOs = 3`<br/>
 Remove current `T` input from UTXOs -> `UTXOs = 2`
 
-3. As far as we sending units (e.g. money) and creating transactions for every time we added a new block to blockchain and next transaction to UTXOs. Every next block in blockchain knows about previous.
+3. Whenever we sending units (e.g. money) and creating transactions we adding a new block to blockchain and next transaction to UTXOs. Every next block in blockchain knows about previous.
 
 What is UTXO in blockchain?
 >A UTXO is an unspent transaction output. In an accepted transaction in a valid blockchain 
