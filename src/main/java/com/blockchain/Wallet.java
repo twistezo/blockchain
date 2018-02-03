@@ -44,7 +44,7 @@ class Wallet {
 
     Transaction sendFunds(PublicKey recipient, float value) {
         if (getBalance() < value) {
-            System.out.println(" Error: Not enough funds");
+            Utils.log("Error: Not enough funds");
             return null;
         }
 
@@ -64,5 +64,13 @@ class Wallet {
             UTXOs.remove(input.transactionOutputId);
         }
         return newTransaction;
+    }
+
+    String getPrivateKey() {
+        return privateKey.getEncoded().toString();
+    }
+
+    String getPublicKey() {
+        return publicKey.getEncoded().toString();
     }
 }

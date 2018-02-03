@@ -7,80 +7,58 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class Blockchain {
 	static HashMap<String, TransactionOutput> UTXOs = new HashMap<String, TransactionOutput>();
-	private ArrayList<Block> blockchain = new ArrayList<Block>();
-	private int difficulty = 3;
+	private ArrayList<Block> blocks = new ArrayList<Block>();
+	private int difficulty = 1;
 	private Transaction genesisTransaction;
 
-	public static void main(String[] args) {
-		Blockchain blockchainRunner = new Blockchain();
-		blockchainRunner.run();
+	Blockchain() {
+		Security.addProvider(new BouncyCastleProvider()); // Cryptographic API for Java e.g. ECDSA	
 	}
 
-	void run() {
-		// Add a cryptographic API for Java e.g. ECDSA	
-		Security.addProvider(new BouncyCastleProvider());
-		Wallet walletA = new Wallet();
-		Wallet walletB = new Wallet();
-
-		// Hardcode first wallet and first transaction
-		println("Creating genesis wallet and first transaction...");
+	/**
+	 * Hardcode first wallet, first transaction and first block
+	 */
+	void prepareGenesisTransaction(Wallet secondWallet) {
 		Wallet genesisWallet = new Wallet();
-		genesisTransaction = new Transaction(genesisWallet.publicKey, walletA.publicKey, 100f, null);
+		genesisTransaction = new Transaction(genesisWallet.publicKey, secondWallet.publicKey, 100f, null);
 		genesisTransaction.generateSignature(genesisWallet.privateKey);
 		genesisTransaction.outputs.add(new TransactionOutput(genesisTransaction.recipient, genesisTransaction.value,
 				genesisTransaction.transactionId));
 		UTXOs.put(genesisTransaction.outputs.get(0).id, genesisTransaction.outputs.get(0));
-		println("Creating genesis wallet and first transaction... DONE");
 
-		println("\nCreating and Mining Genesis block...");
-		Block genesis = new Block("0");
-		genesis.addTransaction(genesisTransaction);
-		addBlock(genesis);
-		println("Creating and Mining Genesis block... DONE");
-
-		println("\nTest #1...");
-		Block block1 = new Block(genesis.hash);
-		printBalance(walletA, "A");
-		printBalance(walletB, "B");
-		println("Sending '40' from WalletA to WalletB");
-		block1.addTransaction(walletA.sendFunds(walletB.publicKey, 40f));
-		addBlock(block1);
-		printBalance(walletA, "A");
-		printBalance(walletB, "B");
-
-		println("\nTest #2...");
-		Block block2 = new Block(block1.hash);
-		printBalance(walletA, "A");
-		printBalance(walletB, "B");
-		println("Sending '1000' from WalletA to WalletB");
-		block2.addTransaction(walletA.sendFunds(walletB.publicKey, 1000f));
-		addBlock(block2);
-		printBalance(walletA, "A");
-		printBalance(walletB, "B");
-
-		println("\nTest #3...");
-		Block block3 = new Block(block2.hash);
-		printBalance(walletA, "A");
-		printBalance(walletB, "B");
-		println("Sending '20' from WalletB to WalletA");
-		block3.addTransaction(walletB.sendFunds(walletA.publicKey, 20));
-		addBlock(block3);
-		printBalance(walletA, "A");
-		printBalance(walletB, "B");
-
-		ChainValidator.check(blockchain, genesisTransaction, difficulty);
+		Block genesisBlock = new Block("0");
+		genesisBlock.addTransaction(genesisTransaction);
+		genesisBlock.mineBlock(difficulty);
+		blocks.add(genesisBlock);
 	}
 
-	private void addBlock(Block newBlock) {
-		newBlock.mineBlock(difficulty);
-		blockchain.add(newBlock);
+	void makeTransfer(Wallet sender, Wallet recipient, float value, Blockchain blockchain) {
+		Block block = new Block(blockchain.getHashFromLastBlock());
+		printBalance(sender, "Sender");
+		printBalance(recipient, "Recipient");
+		block.addTransaction(sender.sendFunds(recipient.publicKey, value));
+		block.mineBlock(difficulty);
+		blocks.add(block);
+		printBalance(sender, "Sender");
+		printBalance(recipient, "Recipient");
+
+		Utils.log("\nValidating blockchain..");
+		ChainValidator.check(blockchain.blocks, genesisTransaction, difficulty);
+	}
+
+	Wallet createWallet() {
+		return new Wallet();
+	}
+
+	void setMiningDifficulty(int value) {
+		this.difficulty = value;
 	}
 
 	private void printBalance(Wallet wallet, String wallet_name) {
-		println("Wallet " + wallet_name + " balance is: " + wallet.getBalance());
+		Utils.log(wallet_name + " wallet balance = " + wallet.getBalance());
 	}
 
-	private void println(Object line) {
-		System.out.println(line);
+	private String getHashFromLastBlock() {
+		return blocks.get(blocks.size() - 1).hash;
 	}
 }

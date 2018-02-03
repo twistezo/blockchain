@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 class ChainValidator {
     static boolean check(ArrayList<Block> blockchain, Transaction genesisTransaction, int difficulty) {
-        System.out.println("\nValidate blockchain...");
         Block currentBlock;
         Block previousBlock;
         HashMap<String, TransactionOutput> tempUTXOs = new HashMap<String, TransactionOutput>();
@@ -17,15 +16,15 @@ class ChainValidator {
             currentBlock = blockchain.get(i);
 
             if (!currentBlock.hash.equals(currentBlock.calculateHash())) {
-                System.out.println("Error: Hash of block is damaged");
+                Utils.log("Error: Hash of block is damaged");
                 return false;
             }
             if (!previousBlock.hash.equals(currentBlock.previousHash)) {
-                System.out.println("Error: Previous block hash and current block hash are not equals");
+                Utils.log("Error: Previous block hash and current block hash are not equals");
                 return false;
             }
             if (!currentBlock.hash.substring(0, difficulty).equals(hashTarget)) {
-                System.out.println("Error: This block has not been mined");
+                Utils.log("Error: This block has not been mined");
                 return false;
             }
 
@@ -34,11 +33,11 @@ class ChainValidator {
                 Transaction currentTransaction = currentBlock.transactions.get(t);
 
                 if (!currentTransaction.verifiySignature()) {
-                    System.out.println("Error: Signature on transaction(" + t + ") is invalid");
+                    Utils.log("Error: Signature on transaction(" + t + ") is invalid");
                     return false;
                 }
                 if (currentTransaction.getInputsValue() != currentTransaction.getOutputsValue()) {
-                    System.out.println("Error: Inputs are not equal to outputs on transaction(" + t + ")");
+                    Utils.log("Error: Inputs are not equal to outputs on transaction(" + t + ")");
                     return false;
                 }
 
@@ -46,12 +45,12 @@ class ChainValidator {
                     tempOutput = tempUTXOs.get(input.transactionOutputId);
 
                     if (tempOutput == null) {
-                        System.out.println("Error: Referenced input on transaction(" + t + ") is missing");
+                        Utils.log("Error: Referenced input on transaction(" + t + ") is missing");
                         return false;
                     }
 
                     if (input.UTXO.value != tempOutput.value) {
-                        System.out.println("Error: Referenced input transaction(" + t + ") value is Invalid");
+                        Utils.log("Error: Referenced input transaction(" + t + ") value is Invalid");
                         return false;
                     }
 
@@ -62,16 +61,15 @@ class ChainValidator {
                     tempUTXOs.put(output.id, output);
                 }
                 if (currentTransaction.outputs.get(0).recipient != currentTransaction.recipient) {
-                    System.out.println("Error: transaction(" + t + ") output recipient is not who it should be");
+                    Utils.log("Error: transaction(" + t + ") output recipient is not who it should be");
                     return false;
                 }
                 if (currentTransaction.outputs.get(1).recipient != currentTransaction.sender) {
-                    System.out.println("Error: transaction(" + t + ") output recipient is not a sender.");
+                    Utils.log("Error: transaction(" + t + ") output recipient is not a sender.");
                     return false;
                 }
             }
         }
-        System.out.println("Validate blockchain... DONE");
         return true;
     }
 }

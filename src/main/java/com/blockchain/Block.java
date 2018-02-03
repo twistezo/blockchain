@@ -27,28 +27,25 @@ class Block {
     }
 
     boolean addTransaction(Transaction transaction) {
-        System.out.println(" Adding transaction to block...");
         if (transaction == null)
             return false;
         if (previousHash != "0") {
             if (transaction.processTransaction() != true) {
-                System.out.println(" Warning: Transaction discarded");
+                Utils.log("Warning: Transaction discarded");
                 return false;
             }
         }
-        System.out.println(" Adding transaction to block... DONE");
         transactions.add(transaction);
         return true;
     }
 
     void mineBlock(int difficulty) {
-        System.out.println(" Mining block: " + hash);
+        Utils.log("Mining block: " + hash);
         merkleRoot = CryptoUtils.getMerkleRoot(transactions);
         String target = CryptoUtils.getDificultyString(difficulty);
         while (!hash.substring(0, difficulty).equals(target)) {
             nonce++;
             hash = calculateHash();
         }
-        System.out.println(" Mining block... DONE");
     }
 }

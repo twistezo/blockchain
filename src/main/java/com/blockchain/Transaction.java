@@ -22,7 +22,7 @@ class Transaction {
     }
 
     boolean processTransaction() {
-        System.out.println(" Processing transaction...");
+        Utils.log("Processing transaction..");
         if (verifiySignature() == false) {
             return false;
         }
@@ -54,7 +54,6 @@ class Transaction {
                 continue;
             Blockchain.UTXOs.remove(i.UTXO.id);
         }
-        System.out.println(" Processing transaction... DONE");
         return true;
     }
 

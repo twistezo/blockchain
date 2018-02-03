@@ -47,7 +47,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.2.1</version>
                 <configuration>
-                    <mainClass>com.blockchain.Blockchain</mainClass>
+                    <mainClass>com.blockchain.Main</mainClass>
                 </configuration>
             </plugin>
         </plugins>
