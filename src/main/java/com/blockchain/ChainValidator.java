@@ -17,11 +17,11 @@ class ChainValidator {
             currentBlock = blockchain.get(i);
 
             if (!currentBlock.hash.equals(currentBlock.calculateHash())) {
-                System.out.println("Error: Current Hashes not equal");
+                System.out.println("Error: Hash of block is damaged");
                 return false;
             }
             if (!previousBlock.hash.equals(currentBlock.previousHash)) {
-                System.out.println("Error: Previous Hashes not equal");
+                System.out.println("Error: Previous block hash and current block hash are not equals");
                 return false;
             }
             if (!currentBlock.hash.substring(0, difficulty).equals(hashTarget)) {

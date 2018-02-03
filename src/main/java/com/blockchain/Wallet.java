@@ -12,21 +12,21 @@ class Wallet {
     private HashMap<String, TransactionOutput> UTXOs = new HashMap<String, TransactionOutput>();
 
     Wallet() {
-        generateKeyPair();
+        generatePrivateAndPublicKeys();
     }
 
-    void generateKeyPair() {
+    private void generatePrivateAndPublicKeys() {
         try {
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("ECDSA", "BC");
-            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
             ECGenParameterSpec ecSpec = new ECGenParameterSpec("prime192v1");
+            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
 
             keyGen.initialize(ecSpec, random);
             KeyPair keyPair = keyGen.generateKeyPair();
             privateKey = keyPair.getPrivate();
             publicKey = keyPair.getPublic();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Wallet: generateKeyPair failed caused by: " + e);
         }
     }
 

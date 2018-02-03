@@ -17,8 +17,11 @@ class Block {
         this.hash = calculateHash();
     }
 
+    /**
+     * String: "previousHash + timeStamp + nonce + merkeRoot" encoded by SHA256
+     */
     String calculateHash() {
-        String calculatedhash = StringUtils
+        String calculatedhash = CryptoUtils
                 .applySha256(previousHash + Long.toString(timeStamp) + Integer.toString(nonce) + merkleRoot);
         return calculatedhash;
     }
@@ -40,8 +43,8 @@ class Block {
 
     void mineBlock(int difficulty) {
         System.out.println(" Mining block: " + hash);
-        merkleRoot = StringUtils.getMerkleRoot(transactions);
-        String target = StringUtils.getDificultyString(difficulty);
+        merkleRoot = CryptoUtils.getMerkleRoot(transactions);
+        String target = CryptoUtils.getDificultyString(difficulty);
         while (!hash.substring(0, difficulty).equals(target)) {
             nonce++;
             hash = calculateHash();

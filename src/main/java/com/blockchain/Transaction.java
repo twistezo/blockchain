@@ -10,7 +10,7 @@ class Transaction {
     float value;
     ArrayList<TransactionInput> inputs = new ArrayList<TransactionInput>();
     ArrayList<TransactionOutput> outputs = new ArrayList<TransactionOutput>();
-    private float minimumTransaction = 0.1f;
+    private float minimumTransactionValue = 0.1f;
     private int transactionCounter = 0;
     private byte[] signature;
 
@@ -21,32 +21,34 @@ class Transaction {
         this.inputs = inputs;
     }
 
-    void generateSignature(PrivateKey privateKey) {
-        String data = StringUtils.getStringFromKey(sender) + StringUtils.getStringFromKey(recipient)
-                + Float.toString(value);
-        signature = StringUtils.applyECDSASig(privateKey, data);
-    }
-
     boolean processTransaction() {
         System.out.println(" Processing transaction...");
         if (verifiySignature() == false) {
             return false;
         }
+
+        // Input is always an output of previously generated transaction
         for (TransactionInput input : inputs) {
             input.UTXO = Blockchain.UTXOs.get(input.transactionOutputId);
         }
-        if (getInputsValue() < minimumTransaction) {
+        if (getInputsValue() < minimumTransactionValue) {
             return false;
         }
 
+        // Substract current transaction value from all inputs 
         float leftOver = getInputsValue() - value;
         transactionId = calulateHash();
+
+        // Generate outputs with properly sender and recipient values
         outputs.add(new TransactionOutput(this.recipient, value, transactionId));
         outputs.add(new TransactionOutput(this.sender, leftOver, transactionId));
 
+        // Add transaction outputs to Blockchain UTXOs
         for (TransactionOutput o : outputs) {
             Blockchain.UTXOs.put(o.id, o);
         }
+
+        // Remove finished transactions from UTXOs
         for (TransactionInput i : inputs) {
             if (i.UTXO == null)
                 continue;
@@ -54,6 +56,24 @@ class Transaction {
         }
         System.out.println(" Processing transaction... DONE");
         return true;
+    }
+
+    /**
+    * Encode String: "sender + recipient + value" and encode this with privateKey by ECDSA 
+    */
+    void generateSignature(PrivateKey privateKey) {
+        String data = CryptoUtils.encodeWithBase64(sender) + CryptoUtils.encodeWithBase64(recipient)
+                + Float.toString(value);
+        signature = CryptoUtils.applyECDSASig(privateKey, data);
+    }
+
+    /**
+     * String: "sender + recipient + value" verified by ECDSA and transaction signature
+     */
+    boolean verifiySignature() {
+        String data = CryptoUtils.encodeWithBase64(sender) + CryptoUtils.encodeWithBase64(recipient)
+                + Float.toString(value);
+        return CryptoUtils.verifyECDSASig(sender, data, signature);
     }
 
     float getInputsValue() {
@@ -66,12 +86,6 @@ class Transaction {
         return total;
     }
 
-    boolean verifiySignature() {
-        String data = StringUtils.getStringFromKey(sender) + StringUtils.getStringFromKey(recipient)
-                + Float.toString(value);
-        return StringUtils.verifyECDSASig(sender, data, signature);
-    }
-
     float getOutputsValue() {
         float total = 0;
         for (TransactionOutput o : outputs) {
@@ -80,9 +94,10 @@ class Transaction {
         return total;
     }
 
+    // String: "sender + recipient + value + transactionCounter" encoded by SHA256
     private String calulateHash() {
         transactionCounter++;
-        return StringUtils.applySha256(StringUtils.getStringFromKey(sender) + StringUtils.getStringFromKey(recipient)
+        return CryptoUtils.applySha256(CryptoUtils.encodeWithBase64(sender) + CryptoUtils.encodeWithBase64(recipient)
                 + Float.toString(value) + transactionCounter);
     }
 }

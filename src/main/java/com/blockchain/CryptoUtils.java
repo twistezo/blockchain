@@ -4,8 +4,8 @@ import java.security.*;
 import java.util.Base64;
 import java.util.ArrayList;
 
-class StringUtils {
-    static String getStringFromKey(Key key) {
+class CryptoUtils {
+    static String encodeWithBase64(Key key) {
         return Base64.getEncoder().encodeToString(key.getEncoded());
     }
 
@@ -33,14 +33,13 @@ class StringUtils {
      * Generate digitial signature with Elliptic Curve Cryptography - `ECDSA`
      */
     static byte[] applyECDSASig(PrivateKey privateKey, String input) {
-        Signature dsa;
         byte[] output = new byte[0];
         try {
-            dsa = Signature.getInstance("ECDSA", "BC");
-            dsa.initSign(privateKey);
+            Signature signature = Signature.getInstance("ECDSA", "BC");
+            signature.initSign(privateKey);
             byte[] strByte = input.getBytes();
-            dsa.update(strByte);
-            byte[] realSig = dsa.sign();
+            signature.update(strByte);
+            byte[] realSig = signature.sign();
             output = realSig;
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -12,8 +12,9 @@ class TransactionOutput {
         this.recipient = recipient;
         this.value = value;
         this.parentTransactionId = parentTransactionId;
-        this.id = StringUtils
-                .applySha256(StringUtils.getStringFromKey(recipient) + Float.toString(value) + parentTransactionId);
+        // id -> String: "recipient + value + parentTransactionId" encoded by SHA256
+        this.id = CryptoUtils
+                .applySha256(CryptoUtils.encodeWithBase64(recipient) + Float.toString(value) + parentTransactionId);
     }
 
     boolean isMine(PublicKey publicKey) {
