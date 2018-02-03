@@ -3,9 +3,9 @@
 ### Description
 My implementation of blockchain in Java
 
-#### How it works?
+How it works?
 1. Create 3 wallets: Genesis Wallet (as `GW`), Wallet A (as `A`) and Wallet B (as `B`)<br/>
-We have to hardcode first transaction in `GW`<br/>
+Hardcode first transaction in `GW`<br/>
 Create transaction (without block) and we have e.g. 100 unit on `GW`.<br/>
 Current transactions data counter: `GW transaction: inputs = 0 , outputs = 1` -> `UTXOs = 1`
 2. Send 100 unit from `GW` to `A`<br/>
@@ -19,7 +19,7 @@ Remove current `T` input from UTXOs -> `UTXOs = 2`
 
 3. As far as we sending units (e.g. money) and creating transactions for every time we added a new block to blockchain and next transaction to UTXOs. Every next block in blockchain knows about previous.
 
-#### What is UTXO in blockchain?
+What is UTXO in blockchain?
 >A UTXO is an unspent transaction output. In an accepted transaction in a valid blockchain 
 payment system (such as Bitcoin), only unspent outputs can be used as inputs to a transaction. 
 When a transaction takes place, inputs are deleted and outputs are created as new UTXOs 
