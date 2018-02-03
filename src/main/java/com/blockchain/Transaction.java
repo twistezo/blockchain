@@ -32,8 +32,8 @@ class Transaction {
         if (verifiySignature() == false) {
             return false;
         }
-        for (TransactionInput i : inputs) {
-            i.UTXO = Blockchain.UTXOs.get(i.transactionOutputId);
+        for (TransactionInput input : inputs) {
+            input.UTXO = Blockchain.UTXOs.get(input.transactionOutputId);
         }
         if (getInputsValue() < minimumTransaction) {
             return false;

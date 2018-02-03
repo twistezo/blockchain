@@ -9,7 +9,7 @@ class Block {
     String merkleRoot;
     ArrayList<Transaction> transactions = new ArrayList<Transaction>();
     long timeStamp;
-    int nonce;
+    int nonce; // miners starting iterate point
 
     Block(String previousHash) {
         this.previousHash = previousHash;

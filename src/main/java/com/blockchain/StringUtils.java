@@ -2,7 +2,6 @@ package com.blockchain;
 
 import java.security.*;
 import java.util.Base64;
-import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 
 class StringUtils {
@@ -10,22 +9,9 @@ class StringUtils {
         return Base64.getEncoder().encodeToString(key.getEncoded());
     }
 
-    static byte[] applyECDSASig(PrivateKey privateKey, String input) {
-        Signature dsa;
-        byte[] output = new byte[0];
-        try {
-            dsa = Signature.getInstance("ECDSA", "BC");
-            dsa.initSign(privateKey);
-            byte[] strByte = input.getBytes();
-            dsa.update(strByte);
-            byte[] realSig = dsa.sign();
-            output = realSig;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return output;
-    }
-
+    /**
+     * Generate secure hash algorithm (256 bits)
+     */
     static String applySha256(String input) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -43,6 +29,28 @@ class StringUtils {
         }
     }
 
+    /**
+     * Generate digitial signature with Elliptic Curve Cryptography - `ECDSA`
+     */
+    static byte[] applyECDSASig(PrivateKey privateKey, String input) {
+        Signature dsa;
+        byte[] output = new byte[0];
+        try {
+            dsa = Signature.getInstance("ECDSA", "BC");
+            dsa.initSign(privateKey);
+            byte[] strByte = input.getBytes();
+            dsa.update(strByte);
+            byte[] realSig = dsa.sign();
+            output = realSig;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return output;
+    }
+
+    /**
+     * Verify digitial signature with Elliptic Curve Cryptography - `ECDSA`
+     */
     static boolean verifyECDSASig(PublicKey publicKey, String data, byte[] signature) {
         try {
             Signature ecdsaVerify = Signature.getInstance("ECDSA", "BC");
@@ -54,22 +62,24 @@ class StringUtils {
         }
     }
 
-    String getJson(Object o) {
-        return new GsonBuilder().setPrettyPrinting().create().toJson(o);
-    }
-
     static String getDificultyString(int difficulty) {
+        // Replace java null characeter `\0` with `0`
         return new String(new char[difficulty]).replace('\0', '0');
     }
 
+    /** 
+     * Merkle root is a hash tree. It cheks data integrity e.g. in p2p or bitcoin
+     * @return root of tree
+     */
     static String getMerkleRoot(ArrayList<Transaction> transactions) {
+        // Fill tree with previous transactions
         ArrayList<String> previousTreeLayer = new ArrayList<String>();
-        int count = transactions.size();
-
         for (Transaction transaction : transactions) {
             previousTreeLayer.add(transaction.transactionId);
         }
 
+        // Verify tree with hashes
+        int count = transactions.size();
         ArrayList<String> treeLayer = previousTreeLayer;
         while (count > 1) {
             treeLayer = new ArrayList<String>();
